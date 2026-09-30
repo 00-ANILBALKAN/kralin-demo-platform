@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kralin Software — Yönetim Konsolu</title>
+  <link rel="icon" type="image/png" href="/images/kralin-logo.png">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --kralin-purple: #9b6dff;
+      --kralin-purple-dark: #5a3291;
+      --kralin-purple-light: #bda3ff;
+      --font-kralin: "Satoshi", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
+    }
+    body {
+      font-family: var(--font-kralin);
+      background-color: #000000;
+      color: #f5f5f7;
+      letter-spacing: -0.015em;
+    }
+    .apple-nav {
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .apple-card {
+      background: #141416;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .apple-card:hover {
+      border-color: rgba(155, 109, 255, 0.25);
+    }
+    .apple-input {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      transition: all 0.2s ease;
+    }
+    .apple-input:focus {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--kralin-purple);
+      box-shadow: 0 0 0 3px rgba(155, 109, 255, 0.2);
+    }
+    .kralin-btn-primary {
+      background-color: var(--kralin-purple);
+      color: #ffffff;
+      transition: all 0.15s ease;
+    }
+    .kralin-btn-primary:hover {
+      background-color: #8c57ff;
+    }
+    .kralin-btn-primary:active {
+      transform: scale(0.99);
+    }
+    .apple-btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #f5f5f7;
+      transition: all 0.15s ease;
+    }
+    .apple-btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #333336;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans selection:bg-[#9b6dff]/30">
+
+  <!-- Apple Navigation with Kralin Brand -->
+  <header class="apple-nav sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+      
+      <div class="flex items-center gap-3">
+        <a href="/" class="flex items-center gap-2.5">
+          <img src="/images/kralin-logo.png" alt="Kralin Software" class="w-7 h-7 rounded-lg object-contain">
+          <span class="font-black text-sm tracking-tight text-white">Kralin Software</span>
+        </a>
+        <span class="text-neutral-700 text-xs">/</span>
+        <span class="text-xs text-neutral-400 font-medium">Console</span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a 
+          href="https://kralinsoftware.com" 
+          target="_blank" 
+          class="text-xs text-neutral-400 hover:text-white transition px-3 py-1.5 rounded-full hover:bg-white/5 hidden sm:flex items-center gap-1"
+        >
+          <span>kralinsoftware.com</span>
+          <i class="fa-solid fa-arrow-up-right-from-square text-[9px] text-neutral-500"></i>
+        </a>
+        <a 
+          href="/" 
+          target="_blank" 
+          class="text-xs text-neutral-400 hover:text-white px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 transition flex items-center gap-1.5"
+        >
+          <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+          <span>Portal</span>
+        </a>
+        <button 
+          id="logoutBtn" 
+          class="text-xs text-neutral-400 hover:text-red-400 px-3 py-1.5 rounded-full bg-white/5 hover:bg-red-500/10 transition flex items-center gap-1.5 cursor-pointer"
+        >
+          <i class="fa-solid fa-arrow-right-from-bracket text-[10px]"></i>
+          <span>Çıkış</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-6 py-8 sm:py-10 space-y-8">
+    
+    <!-- Top Action & Stats Bar -->
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-2">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+          Müşteri Projeleri
+        </h1>
+        <p class="text-xs text-neutral-400 mt-1">
+          Web sitesi demolarını yükleyin, şifreleyin ve firmalarla kurumsal olarak paylaşın.
+        </p>
+      </div>
+
+      <button 
+        onclick="openUploadModal()" 
+        class="kralin-btn-primary px-4 py-2.5 rounded-full text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer shadow-sm self-start sm:self-auto"
+      >
+        <i class="fa-solid fa-plus text-[10px]"></i>
+        <span>Yeni Proje Yükle</span>
+      </button>
+    </div>
+
+    <!-- Apple Stats Row with Kralin Tint -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+      <div class="apple-card rounded-2xl p-5">
+        <div class="text-[11px] font-semibold text-neutral-500 uppercase tracking-wider">Toplam Proje</div>
+        <div id="statTotal" class="text-3xl font-bold text-white mt-1.5 tracking-tight">0</div>
+        <div class="text-[11px] text-neutral-500 mt-1">Sistemde barındırılan siteler</div>
+      </div>
+
+      <div class="apple-card rounded-2xl p-5">
+        <div class="text-[11px] font-semibold text-neutral-500 uppercase tracking-wider">Aktif Demolar</div>
+        <div id="statActive" class="text-3xl font-bold text-emerald-400 mt-1.5 tracking-tight">0</div>
+        <div class="text-[11px] text-neutral-500 mt-1 flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Müşteri erişimine açık
+        </div>
+      </div>
+
+      <div class="apple-card rounded-2xl p-5">
+        <div class="text-[11px] font-semibold text-neutral-500 uppercase tracking-wider">Görüntülenme</div>
+        <div id="statViews" class="text-3xl font-bold text-[#bda3ff] mt-1.5 tracking-tight">0</div>
+        <div class="text-[11px] text-neutral-500 mt-1">Toplam müşteri inceleme sayısı</div>
+      </div>
+    </div>
+
+    <!-- Search & Filter Controls -->
+    <div class="flex items-center justify-between gap-4 pt-2">
+      <div class="relative flex-1 max-w-sm">
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-500 text-xs"></i>
+        <input 
+          type="text" 
+          id="searchInput" 
+          placeholder="Firma veya bağlantı kodu ara..."
+          class="apple-input w-full pl-9 pr-3 py-2 rounded-xl text-xs text-white placeholder:text-neutral-500 focus:outline-none"
+        >
+      </div>
+
+      <button 
+        onclick="loadProjects()" 
+        title="Yenile" 
+        class="apple-btn-secondary p-2.5 rounded-xl text-neutral-400 hover:text-white text-xs transition cursor-pointer"
+      >
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingProjects" class="py-16 text-center text-neutral-500 text-xs">
+      <i class="fa-solid fa-circle-notch fa-spin text-sm mb-2 text-[#9b6dff]"></i>
+      <div>Projeler yükleniyor...</div>
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyProjects" class="hidden py-16 text-center apple-card rounded-3xl border-dashed">
+      <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 text-neutral-400 flex items-center justify-center mx-auto mb-3 text-sm">
+        <i class="fa-solid fa-folder-open"></i>
+      </div>
+      <h3 class="text-sm font-semibold text-white">Henüz Hiçbir Proje Yok</h3>
+      <p class="text-xs text-neutral-500 mt-1 max-w-xs mx-auto">
+        Web sitenizin ZIP arşivini yükleyerek ilk müşteri demonuzu oluşturun.
+      </p>
+      <button 
+        onclick="openUploadModal()" 
+        class="kralin-btn-primary mt-4 px-4 py-2 rounded-full text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer"
+      >
+        <i class="fa-solid fa-plus text-[10px]"></i>
+        <span>Proje Yükle</span>
+      </button>
+    </div>
+
+    <!-- Projects Grid -->
+    <div id="projectsGrid" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- Populated by JavaScript -->
+    </div>
+
+  </main>
+
+  <!-- APPLE SHEET: YENİ PROJE YÜKLEME MODALI -->
+  <div id="uploadModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+    <div class="bg-[#141416] border border-white/10 rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl relative max-h-[92vh] overflow-y-auto custom-scrollbar">
+      
+      <button onclick="closeUploadModal()" class="absolute top-5 right-5 text-neutral-400 hover:text-white p-1 text-sm">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="mb-6 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-[#9b6dff]/15 border border-[#9b6dff]/25 flex items-center justify-center p-2">
+          <img src="/images/kralin-logo.png" alt="Kralin" class="w-full h-full object-contain">
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-white">Yeni Demo Yayına Al</h3>
+          <p class="text-xs text-neutral-400 mt-0.5">Web sitesi ZIP dosyasını yükleyin ve firmaya özel şifre atayın</p>
+        </div>
+      </div>
+
+      <form id="uploadForm" class="space-y-4">
+        
+        <!-- Firma Adı -->
+        <div>
+          <label class="block text-[11px] font-medium text-neutral-400 mb-1.5">
+            Firma / Proje Adı <span class="text-[#9b6dff]">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="modalName" 
+            name="name" 
+            required 
+            placeholder="Örn: Ahmet İnşaat Mimarlık"
+            class="apple-input w-full px-3.5 py-2.5 rounded-xl text-xs text-white placeholder:text-neutral-500 focus:outline-none"
+          >
+        </div>
+
+        <!-- URL Slug -->
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="block text-[11px] font-medium text-neutral-400">
+              Demo Bağlantı Kodu (Slug) <span class="text-[#9b6dff]">*</span>
+            </label>
+            <span class="text-[10px] text-neutral-500 font-mono" id="previewUrlHint">...</span>
+          </div>
+          <input 
+            type="text" 
+            id="modalSlug" 
+            name="slug" 
+            required 
+            placeholder="ahmet-insaat"
+            class="apple-input w-full px-3.5 py-2.5 rounded-xl text-xs text-white font-mono placeholder:text-neutral-500 focus:outline-none"
+          >
+        </div>
+
+        <!-- Şifre Belirleme -->
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="block text-[11px] font-medium text-neutral-400">
+              Müşteri Erişim Şifresi
+            </label>
+            <button type="button" onclick="generateRandomPass()" class="text-[11px] text-[#bda3ff] hover:text-[#9b6dff] flex items-center gap-1 cursor-pointer">
+              <i class="fa-solid fa-dice"></i> <span>Rastgele Şifre</span>
+            </button>
+          </div>
+          <div class="relative">
+            <input 
+              type="text" 
+              id="modalPass" 
+              name="password" 
+              placeholder="Örn: 582914 (Boş ise şifresiz olur)"
+              class="apple-input w-full px-3.5 py-2.5 rounded-xl text-xs text-white font-mono placeholder:text-neutral-500 focus:outline-none pr-20"
+            >
+            <button 
+              type="button" 
+              onclick="clearPass()" 
+              class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] bg-white/10 hover:bg-white/15 text-neutral-300 px-2 py-1 rounded-md"
+            >
+              Şifresiz
+            </button>
+          </div>
+        </div>
+
+        <!-- ZIP Drag & Drop -->
+        <div>
+          <label class="block text-[11px] font-medium text-neutral-400 mb-1.5">
+            Web Sitesi ZIP Dosyası <span class="text-[#9b6dff]">*</span>
+          </label>
+          <div 
+            id="dropArea" 
+            class="border border-dashed border-white/15 hover:border-[#9b6dff]/40 rounded-2xl p-6 text-center cursor-pointer transition bg-white/[0.02]"
+          >
+            <i class="fa-solid fa-file-zipper text-2xl text-neutral-400 mb-2"></i>
+            <div id="dropFileName" class="text-xs text-neutral-300 font-medium">
+              ZIP dosyasını sürükleyin veya seçmek için tıklayın
+            </div>
+            <div class="text-[10px] text-neutral-500 mt-1">İçerisinde index.html bulunmalıdır (Maks 150 MB)</div>
+            <input type="file" id="modalZip" name="zipFile" accept=".zip" required class="hidden">
+          </div>
+        </div>
+
+        <!-- Notlar -->
+        <div>
+          <label class="block text-[11px] font-medium text-neutral-400 mb-1.5">
+            Açıklama / Not (İsteğe Bağlı)
+          </label>
+          <textarea 
+            id="modalDesc" 
+            name="description" 
+            rows="2" 
+            placeholder="Örn: V1 Tasarımı sunuldu."
+            class="apple-input w-full px-3.5 py-2 rounded-xl text-xs text-white placeholder:text-neutral-500 focus:outline-none resize-none"
+          ></textarea>
+        </div>
+
+        <div id="modalError" class="hidden text-xs text-red-400 bg-red-500/10 border border-red-500/20 p-2.5 rounded-xl"></div>
+
+        <button 
+          type="submit" 
+          id="uploadSubmitBtn"
+          class="kralin-btn-primary w-full py-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+        >
+          <span>Yayına Al</span>
+        </button>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- APPLE SHEET: WHATSAPP / PAYLAŞIM MODALI -->
+  <div id="shareModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+    <div class="bg-[#141416] border border-white/10 rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl relative">
+      <button onclick="closeShareModal()" class="absolute top-5 right-5 text-neutral-400 hover:text-white p-1 text-sm">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="mb-4 flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center text-emerald-400 text-sm">
+          <i class="fa-brands fa-whatsapp"></i>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-white" id="shareCompanyName">Müşteriye Paylaş</h3>
+          <p class="text-xs text-neutral-400 mt-0.5">WhatsApp veya E-posta için hazır şablon mesaj</p>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <textarea 
+          id="shareMessageText" 
+          rows="6" 
+          readonly 
+          class="w-full p-3.5 bg-black/50 border border-white/10 rounded-2xl text-xs text-neutral-200 font-mono leading-relaxed select-all focus:outline-none resize-none"
+        ></textarea>
+
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <button 
+            id="copyMessageBtn" 
+            onclick="copyShareText()"
+            class="apple-btn-secondary py-2.5 px-3 rounded-xl text-xs font-medium flex items-center justify-center gap-1.5 cursor-pointer"
+          >
+            <i class="fa-regular fa-copy"></i>
+            <span>Metni Kopyala</span>
+          </button>
+          
+          <a 
+            id="openWhatsAppBtn" 
+            target="_blank" 
+            class="bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 px-3 rounded-xl text-xs font-medium flex items-center justify-center gap-1.5 transition"
+          >
+            <i class="fa-brands fa-whatsapp"></i>
+            <span>WhatsApp ile İlet</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLE SHEET: DÜZENLEME MODALI -->
+  <div id="editModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+    <div class="bg-[#141416] border border-white/10 rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl relative">
+      <button onclick="closeEditModal()" class="absolute top-5 right-5 text-neutral-400 hover:text-white p-1 text-sm">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="mb-5">
+        <h3 class="text-base font-bold text-white">Demoyu Düzenle</h3>
+        <p class="text-xs text-neutral-400 mt-0.5" id="editProjectSubtitle">Proje ayarları</p>
+      </div>
+
+      <form id="editForm" class="space-y-3.5">
+        <input type="hidden" id="editProjectId">
+        
+        <div>
+          <label class="block text-[11px] font-medium text-neutral-400 mb-1">Firma Adı</label>
+          <input type="text" id="editName" required class="apple-input w-full px-3 py-2 rounded-xl text-xs text-white focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-medium text-neutral-400 mb-1">Müşteri Şifresi (Boş = Şifresiz)</label>
+          <input type="text" id="editPassword" class="apple-input w-full px-3 py-2 rounded-xl text-xs text-white font-mono focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-medium text-neutral-400 mb-1">Yeni ZIP (Sürüm Güncelleme)</label>
+          <input type="file" id="editZipFile" accept=".zip" class="w-full text-xs text-neutral-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:bg-white/10 file:text-neutral-200 hover:file:bg-white/15">
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-medium text-neutral-400 mb-1">Durum</label>
+          <select id="editIsActive" class="apple-input w-full px-3 py-2 rounded-xl text-xs text-white focus:outline-none">
+            <option value="1">Aktif (Yayında)</option>
+            <option value="0">Pasif (Kilitli)</option>
+          </select>
+        </div>
+
+        <button type="submit" id="editSubmitBtn" class="kralin-btn-primary w-full py-2.5 rounded-xl text-xs font-semibold transition cursor-pointer mt-2">
+          Değişiklikleri Kaydet
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-[#1c1c1e] border border-white/15 text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs">
+    <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
+    <span id="toastMsg">İşlem başarılı</span>
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    let currentProjects = [];
+    let systemBaseDomain = window.location.hostname;
+
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      const toastIcon = document.getElementById('toastIcon');
+
+      toastMsg.textContent = message;
+      toastIcon.className = isError ? 'fa-solid fa-circle-exclamation text-red-400' : 'fa-solid fa-circle-check text-emerald-400';
+
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3000);
+    }
+
+    function makeSlug(text) {
+      const trMap = {
+        'ç':'c', 'Ç':'c', 'ğ':'g', 'Ğ':'g', 'ş':'s', 'Ş':'s',
+        'ü':'u', 'Ü':'u', 'ı':'i', 'İ':'i', 'I':'i', 'ö':'o', 'Ö':'o'
+      };
+      return text
+        .toString()
+        .replace(/[çğşüıöÇĞŞÜİÖI]/g, m => trMap[m] || m)
+        .toLowerCase()
+        .trim()
+        .replace(/[\s\W-]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    }
+
+    async function loadProjects() {
+      const loading = document.getElementById('loadingProjects');
+      const empty = document.getElementById('emptyProjects');
+      const grid = document.getElementById('projectsGrid');
+      
+      loading.classList.remove('hidden');
+      empty.classList.add('hidden');
+      grid.classList.add('hidden');
+
+      try {
+        const statsRes = await fetch('/api/admin/stats', {
+          headers: { 'Accept': 'application/json' }
+        });
+        if (statsRes.status === 401 || !statsRes.ok) {
+          window.location.href = '/admin/login';
+          return;
+        }
+        const stats = await statsRes.json();
+        document.getElementById('statTotal').textContent = stats.total;
+        document.getElementById('statActive').textContent = stats.active;
+        document.getElementById('statViews').textContent = stats.totalViews;
+        if (stats.baseDomain) systemBaseDomain = stats.baseDomain;
+
+        const res = await fetch('/api/admin/projects', {
+          headers: { 'Accept': 'application/json' }
+        });
+        if (!res.ok) throw new Error('Projeler alınamadı.');
+        currentProjects = await res.json();
+
+        loading.classList.add('hidden');
+
+        if (currentProjects.length === 0) {
+          empty.classList.remove('hidden');
+        } else {
+          renderProjects(currentProjects);
+          grid.classList.remove('hidden');
+        }
+      } catch (err) {
+        loading.innerHTML = `<div class="text-red-400">Yükleme hatası: ${err.message}</div>`;
+      }
+    }
+
+    function renderProjects(projects) {
+      const grid = document.getElementById('projectsGrid');
+      grid.innerHTML = '';
+
+      projects.forEach(p => {
+        const isPass = !!p.password;
+        const isActive = p.is_active === 1;
+        const demoPathUrl = `${window.location.origin}/demo/${p.slug}`;
+        const rawPathUrl = `${window.location.origin}/raw/${p.slug}/`;
+
+        const card = document.createElement('div');
+        card.className = `apple-card rounded-2xl p-5 flex flex-col justify-between ${!isActive ? 'opacity-60' : ''}`;
+
+        card.innerHTML = `
+          <div>
+            <!-- Status Row -->
+            <div class="flex items-center justify-between mb-3 text-[11px]">
+              <div class="flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-400' : 'bg-neutral-500'}"></span>
+                <span class="text-neutral-400 font-medium">${isActive ? 'Yayında' : 'Pasif'}</span>
+              </div>
+
+              <span class="text-[10px] text-[#bda3ff] bg-[#9b6dff]/10 px-2 py-0.5 rounded-full font-mono border border-[#9b6dff]/20">
+                ${isPass ? 'Şifreli' : 'Herkese Açık'}
+              </span>
+            </div>
+
+            <!-- Title -->
+            <h3 class="text-sm font-bold text-white tracking-tight truncate">
+              ${p.name}
+            </h3>
+
+            <!-- Link Slug -->
+            <div class="mt-1 text-xs text-neutral-500 font-mono truncate">
+              /demo/${p.slug}
+            </div>
+
+            <!-- Passcode Display -->
+            ${isPass ? `
+              <div class="mt-2.5 py-1.5 px-2.5 bg-black/40 border border-white/5 rounded-xl flex items-center justify-between text-xs font-mono">
+                <span class="text-neutral-400">Şifre: <strong class="text-white">${p.password}</strong></span>
+                <button onclick="navigator.clipboard.writeText('${p.password}'); showToast('Şifre kopyalandı!')" class="text-[#bda3ff] hover:text-white p-1" title="Kopyala">
+                  <i class="fa-regular fa-copy text-[10px]"></i>
+                </button>
+              </div>
+            ` : ''}
+
+            <!-- Desc -->
+            ${p.description ? `
+              <p class="text-xs text-neutral-400 mt-2.5 line-clamp-2 font-normal">${p.description}</p>
+            ` : ''}
+          </div>
+
+          <!-- Bottom Actions -->
+          <div class="mt-5 pt-3.5 border-t border-white/5 space-y-3">
+            <div class="flex items-center justify-between text-[11px] text-neutral-500">
+              <span>${p.views_count || 0} görüntülenme</span>
+              <span>${p.created_at ? p.created_at.split(' ')[0] : ''}</span>
+            </div>
+
+            <!-- Main Buttons -->
+            <div class="grid grid-cols-2 gap-2">
+              <a href="${demoPathUrl}" target="_blank" class="apple-btn-secondary py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition">
+                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                <span>Önizle</span>
+              </a>
+
+              <button onclick="openShareModal(${p.id})" class="apple-btn-secondary py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer">
+                <i class="fa-brands fa-whatsapp text-emerald-400"></i>
+                <span>Paylaş</span>
+              </button>
+            </div>
+
+            <!-- Secondary Actions -->
+            <div class="flex items-center justify-between pt-0.5 text-xs text-neutral-400">
+              <button onclick="copyDemoLink('${demoPathUrl}')" class="hover:text-white transition cursor-pointer text-[11px] flex items-center gap-1">
+                <i class="fa-solid fa-link text-[10px]"></i> Bağlantı
+              </button>
+
+              <button onclick="openEditModal(${p.id})" class="hover:text-white transition cursor-pointer text-[11px] flex items-center gap-1">
+                <i class="fa-solid fa-gear text-[10px]"></i> Ayarlar
+              </button>
+
+              <button onclick="deleteProject(${p.id}, '${p.name}')" class="hover:text-red-400 transition cursor-pointer text-[11px] flex items-center gap-1">
+                <i class="fa-solid fa-trash text-[10px]"></i> Sil
+              </button>
+            </div>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    // Search filter
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      const filtered = currentProjects.filter(p => 
+        p.name.toLowerCase().includes(q) || p.slug.toLowerCase().includes(q)
+      );
+      renderProjects(filtered);
+    });
+
+    // Slug auto generation
+    const nameInput = document.getElementById('modalName');
+    const slugInput = document.getElementById('modalSlug');
+    const hint = document.getElementById('previewUrlHint');
+
+    nameInput.addEventListener('input', () => {
+      const slug = makeSlug(nameInput.value);
+      slugInput.value = slug;
+      updateHint(slug);
+    });
+
+    slugInput.addEventListener('input', () => {
+      updateHint(slugInput.value);
+    });
+
+    function updateHint(slug) {
+      hint.textContent = `${slug || 'firma'}.${systemBaseDomain}`;
+    }
+
+    function generateRandomPass() {
+      const randomPin = Math.floor(100000 + Math.random() * 900000).toString();
+      document.getElementById('modalPass').value = randomPin;
+    }
+
+    function clearPass() {
+      document.getElementById('modalPass').value = '';
+    }
+
+    // Drag & Drop
+    const dropArea = document.getElementById('dropArea');
+    const zipInput = document.getElementById('modalZip');
+    const dropFileName = document.getElementById('dropFileName');
+
+    dropArea.addEventListener('click', () => zipInput.click());
+
+    zipInput.addEventListener('change', () => {
+      if (zipInput.files.length > 0) {
+        dropFileName.innerHTML = `<span class="text-white font-medium">${zipInput.files[0].name}</span> (${(zipInput.files[0].size / 1024 / 1024).toFixed(2)} MB)`;
+      }
+    });
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropArea.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropArea.classList.add('border-[#9b6dff]', 'bg-[#9b6dff]/[0.05]');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropArea.classList.remove('border-[#9b6dff]', 'bg-[#9b6dff]/[0.05]');
+      });
+    });
+
+    dropArea.addEventListener('drop', (e) => {
+      const files = e.dataTransfer.files;
+      if (files.length > 0 && files[0].name.endsWith('.zip')) {
+        zipInput.files = files;
+        dropFileName.innerHTML = `<span class="text-white font-medium">${files[0].name}</span> (${(files[0].size / 1024 / 1024).toFixed(2)} MB)`;
+      } else {
+        showToast('Yalnızca .zip uzantılı dosya seçebilirsiniz.', true);
+      }
+    });
+
+    function openUploadModal() {
+      document.getElementById('uploadModal').classList.remove('hidden');
+      document.getElementById('uploadForm').reset();
+      dropFileName.textContent = 'ZIP dosyasını sürükleyin veya seçmek için tıklayın';
+      generateRandomPass();
+      document.getElementById('modalName').focus();
+    }
+
+    function closeUploadModal() {
+      document.getElementById('uploadModal').classList.add('hidden');
+      document.getElementById('modalError').classList.add('hidden');
+    }
+
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('uploadSubmitBtn');
+      const errBox = document.getElementById('modalError');
+      errBox.classList.add('hidden');
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> İşleniyor...';
+
+      const formData = new FormData(document.getElementById('uploadForm'));
+
+      try {
+        const res = await fetch('/api/admin/projects', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          closeUploadModal();
+          showToast(`"${data.project.name}" başarıyla yayına alındı.`);
+          loadProjects();
+          setTimeout(() => openShareModal(data.project.id), 300);
+        } else {
+          errBox.textContent = data.error || 'Yükleme başarısız.';
+          errBox.classList.remove('hidden');
+        }
+      } catch (err) {
+        errBox.textContent = 'Bağlantı hatası: ' + err.message;
+        errBox.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>Yayına Al</span>';
+      }
+    });
+
+    function openShareModal(projectId) {
+      const p = currentProjects.find(item => item.id === projectId);
+      if (!p) return;
+
+      const modal = document.getElementById('shareModal');
+      document.getElementById('shareCompanyName').textContent = `${p.name} — Paylaşım`;
+
+      const demoLink = `${window.location.origin}/demo/${p.slug}`;
+
+      let msg = `Merhaba,\n\nKralin Software tarafından firmanız için hazırlanan web sitesi tasarımı incelemeniz için hazırlandı.\n\n`;
+      msg += `🔗 Önizleme Bağlantısı:\n${demoLink}\n`;
+      if (p.password) {
+        msg += `🔑 Erişim Şifreniz: ${p.password}\n`;
+      }
+      msg += `\nSayfanın üst kısmındaki kontrol çubuğundan sitenizi Masaüstü, iPad ve iPhone ekranlarında canlı test edebilirsiniz.\n\nİyi incelemeler dileriz.\nKralin Software`;
+
+      document.getElementById('shareMessageText').value = msg;
+      document.getElementById('openWhatsAppBtn').href = `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeShareModal() {
+      document.getElementById('shareModal').classList.add('hidden');
+    }
+
+    function copyShareText() {
+      const text = document.getElementById('shareMessageText').value;
+      navigator.clipboard.writeText(text);
+      showToast('Paylaşım metni panoya kopyalandı.');
+    }
+
+    function copyDemoLink(url) {
+      navigator.clipboard.writeText(url);
+      showToast('Bağlantı panoya kopyalandı.');
+    }
+
+    function openEditModal(projectId) {
+      const p = currentProjects.find(item => item.id === projectId);
+      if (!p) return;
+
+      document.getElementById('editProjectId').value = p.id;
+      document.getElementById('editName').value = p.name;
+      document.getElementById('editPassword').value = p.password || '';
+      document.getElementById('editIsActive').value = p.is_active;
+      document.getElementById('editProjectSubtitle').textContent = `/demo/${p.slug}`;
+
+      document.getElementById('editModal').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').classList.add('hidden');
+    }
+
+    document.getElementById('editForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('editProjectId').value;
+      const btn = document.getElementById('editSubmitBtn');
+
+      btn.disabled = true;
+      btn.textContent = 'Kaydediliyor...';
+
+      const formData = new FormData();
+      formData.append('name', document.getElementById('editName').value);
+      formData.append('password', document.getElementById('editPassword').value);
+      formData.append('is_active', document.getElementById('editIsActive').value);
+
+      const zipFile = document.getElementById('editZipFile').files[0];
+      if (zipFile) {
+        formData.append('zipFile', zipFile);
+      }
+
+      try {
+        const res = await fetch(`/api/admin/projects/${id}`, {
+          method: 'PUT',
+          body: formData
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          closeEditModal();
+          showToast('Proje güncellendi.');
+          loadProjects();
+        } else {
+          showToast(data.error || 'Güncelleme başarısız', true);
+        }
+      } catch (err) {
+        showToast('Hata: ' + err.message, true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Değişiklikleri Kaydet';
+      }
+    });
+
+    async function deleteProject(id, name) {
+      if (!confirm(`"${name}" projesini silmek istediğinize emin misiniz?`)) {
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/admin/projects/${id}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast(`"${name}" silindi.`);
+          loadProjects();
+        } else {
+          showToast(data.error || 'Silinemedi', true);
+        }
+      } catch (err) {
+        showToast('Hata: ' + err.message, true);
+      }
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await fetch('/api/admin/logout', { method: 'POST' });
+      window.location.href = '/admin/login';
+    });
+
+    loadProjects();
+  </script>
+</body>
+</html>

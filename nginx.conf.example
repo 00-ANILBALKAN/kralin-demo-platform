@@ -1,0 +1,53 @@
+# Kralin Software - Nginx Wildcard Subdomain & SSL Konfigürasyonu
+# /etc/nginx/sites-available/kralin-demo dosyanıza yapıştırın.
+
+# 1. HTTP -> HTTPS Yönlendirmesi
+server {
+    listen 80;
+    listen [::]:80;
+    server_name demo.kralinsoftware.com *.demo.kralinsoftware.com;
+
+    return 301 https://$host$request_uri;
+}
+
+# 2. HTTPS Ana Sunucu ve Wildcard Subdomainler
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+
+    # Hem ana demo portalı hem de firma alt alan adları (ahmet-insaat.demo.kralinsoftware.com vb.)
+    server_name demo.kralinsoftware.com *.demo.kralinsoftware.com;
+
+    # Let's Encrypt Wildcard SSL Sertifikaları
+    ssl_certificate /etc/letsencrypt/live/demo.kralinsoftware.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/demo.kralinsoftware.com/privkey.pem;
+
+    # SSL Güvenlik Ayarları
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
+
+    # Büyük ZIP yüklemeleri için izin verilen maksimum boyut (150 MB)
+    client_max_body_size 150M;
+
+    # Arama motorlarının önizleme projelerini indekslemesini engelle
+    add_header X-Robots-Tag "noindex, nofollow, nosnippet, noarchive" always;
+
+    # Ters Proxy (Node.js uygulamamıza yönlendirme)
+    location / {
+        proxy_pass http://127.0.0.1:4000;
+        proxy_http_version 1.1;
+
+        # Webhook ve websocket desteği için
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+
+        # KRİTİK: Express uygulamasının alt alan adını tanıması için gelen Host başlığı iletilmeli
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_cache_bypass $http_upgrade;
+    }
+}

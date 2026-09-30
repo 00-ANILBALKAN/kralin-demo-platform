@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="tr" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kralin Software — Önizleme</title>
+  <link rel="icon" type="image/png" href="/images/kralin-logo.png">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --kralin-purple: #9b6dff;
+      --kralin-purple-light: #bda3ff;
+      --font-kralin: "Satoshi", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
+    }
+    body, html {
+      font-family: var(--font-kralin);
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #000000;
+      color: #f5f5f7;
+      letter-spacing: -0.015em;
+    }
+    .apple-bar {
+      background: rgba(18, 18, 20, 0.88);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .segmented-control {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 3px;
+      border-radius: 9999px;
+    }
+    .segmented-item {
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 9999px;
+      color: #86868b;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .segmented-item:hover {
+      color: #f5f5f7;
+    }
+    .segmented-item.active {
+      background: #ffffff;
+      color: #000000;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    .device-transition {
+      transition: width 0.35s cubic-bezier(0.32, 0.72, 0, 1), height 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .bezel-shadow {
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 20px 60px -15px rgba(0, 0, 0, 0.9);
+    }
+    .kralin-btn {
+      background-color: var(--kralin-purple);
+      color: #ffffff;
+      transition: all 0.2s ease;
+    }
+    .kralin-btn:hover {
+      background-color: #8c57ff;
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col select-none selection:bg-[#9b6dff]/30">
+
+  <!-- Apple macOS Style Top Bar with Kralin Logo -->
+  <header class="apple-bar h-12 px-4 flex items-center justify-between z-30 flex-shrink-0">
+    
+    <!-- Sol: Kralin Logo & Proje Başlığı -->
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
+        <img src="/images/kralin-logo.png" alt="Kralin Software" class="w-5 h-5 rounded-md object-contain">
+        <span class="font-extrabold text-xs tracking-tight text-white hidden sm:inline">Kralin Software</span>
+      </div>
+
+      <span class="text-neutral-700 text-xs hidden sm:inline">/</span>
+
+      <div class="flex items-center gap-2">
+        <span id="headerProjectName" class="text-xs font-semibold text-neutral-300 truncate max-w-[130px] sm:max-w-xs">
+          Yükleniyor...
+        </span>
+        <span class="text-[10px] px-2 py-0.5 rounded-full bg-[#9b6dff]/15 text-[#bda3ff] border border-[#9b6dff]/25 font-mono hidden md:inline">
+          Preview
+        </span>
+      </div>
+    </div>
+
+    <!-- Orta: iOS Segmented Control (Cihaz Switcher) -->
+    <div class="segmented-control flex items-center gap-0.5">
+      <button 
+        id="btnDesktop" 
+        onclick="setViewport('desktop')" 
+        class="segmented-item active flex items-center gap-1.5 cursor-pointer"
+        title="Masaüstü (100%)"
+      >
+        <i class="fa-solid fa-display text-[11px]"></i>
+        <span class="hidden md:inline">Masaüstü</span>
+      </button>
+
+      <button 
+        id="btnLaptop" 
+        onclick="setViewport('laptop')" 
+        class="segmented-item flex items-center gap-1.5 cursor-pointer"
+        title="MacBook (1280px)"
+      >
+        <i class="fa-solid fa-laptop text-[11px]"></i>
+        <span class="hidden lg:inline">MacBook</span>
+      </button>
+
+      <button 
+        id="btnTablet" 
+        onclick="setViewport('tablet')" 
+        class="segmented-item flex items-center gap-1.5 cursor-pointer"
+        title="iPad (768px)"
+      >
+        <i class="fa-solid fa-tablet-screen-button text-[11px]"></i>
+        <span class="hidden md:inline">iPad</span>
+      </button>
+
+      <button 
+        id="btnMobile" 
+        onclick="setViewport('mobile')" 
+        class="segmented-item flex items-center gap-1.5 cursor-pointer"
+        title="iPhone (393px)"
+      >
+        <i class="fa-solid fa-mobile-screen-button text-[11px]"></i>
+        <span class="hidden md:inline">iPhone</span>
+      </button>
+
+      <!-- Döndürme (Rotate) -->
+      <button 
+        id="btnRotate" 
+        onclick="toggleOrientation()" 
+        class="hidden px-2 py-1 text-neutral-400 hover:text-white transition text-xs cursor-pointer"
+        title="Yatay/Dikey Döndür"
+      >
+        <i class="fa-solid fa-rotate"></i>
+      </button>
+    </div>
+
+    <!-- Sağ: Sade Aksiyonlar -->
+    <div class="flex items-center gap-2">
+      <!-- Revize / İletişim Butonu -->
+      <button 
+        onclick="openFeedbackModal()" 
+        class="text-xs bg-[#9b6dff] hover:bg-[#8c57ff] text-white px-3 py-1.5 rounded-full flex items-center gap-1.5 transition font-semibold cursor-pointer shadow-sm"
+      >
+        <i class="fa-brands fa-whatsapp text-xs"></i>
+        <span class="hidden sm:inline">Geri Bildirim</span>
+      </button>
+
+      <!-- Tam Ekran / Saf Görünüm -->
+      <a 
+        id="rawDirectLink" 
+        target="_blank" 
+        class="text-xs text-neutral-400 hover:text-white bg-white/5 hover:bg-white/10 px-2.5 py-1.5 rounded-full transition flex items-center gap-1"
+        title="Çerçevesiz Orijinal Sekmede Aç"
+      >
+        <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+      </a>
+
+      <!-- Oturumu Kapat / Kilitle -->
+      <a 
+        id="lockLink" 
+        class="text-xs text-neutral-500 hover:text-red-400 p-1.5 transition rounded-full" 
+        title="Kilitle"
+      >
+        <i class="fa-solid fa-lock text-[11px]"></i>
+      </a>
+    </div>
+
+  </header>
+
+  <!-- Viewport Canvas -->
+  <main class="flex-1 w-full bg-[#0a0a0b] flex items-center justify-center overflow-auto p-0 relative">
+    
+    <div id="deviceWrapper" class="device-transition w-full h-full relative flex items-center justify-center">
+      
+      <!-- Sitenin çalıştığı Iframe -->
+      <iframe 
+        id="siteFrame" 
+        src="about:blank" 
+        class="w-full h-full border-0 bg-white"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+      ></iframe>
+
+    </div>
+
+  </main>
+
+  <!-- Apple Sheet Stili Revize Modalı -->
+  <div id="feedbackModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+    <div class="bg-[#141416] border border-white/10 rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl relative text-left">
+      <button onclick="closeFeedbackModal()" class="absolute top-5 right-5 text-neutral-400 hover:text-white p-1 text-sm">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="mb-5 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-[#9b6dff]/15 border border-[#9b6dff]/25 flex items-center justify-center p-2">
+          <img src="/images/kralin-logo.png" alt="Kralin" class="w-full h-full object-contain">
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-white">Geri Bildirim & Revize</h3>
+          <p class="text-xs text-neutral-400 mt-0.5">Kralin Software geliştirme ekibine iletin</p>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-[11px] font-medium text-neutral-400 mb-1.5">
+            Görüş veya Notlarınız
+          </label>
+          <textarea 
+            id="feedbackNotes" 
+            rows="4" 
+            placeholder="Tasarım hakkında beğendiğiniz veya güncellenmesini istediğiniz detayları yazabilirsiniz..."
+            class="w-full p-3.5 bg-black/50 border border-white/10 rounded-2xl text-xs text-white placeholder:text-neutral-600 focus:outline-none focus:border-[#9b6dff] focus:ring-2 focus:ring-[#9b6dff]/20 transition resize-none font-sans"
+          ></textarea>
+        </div>
+
+        <button 
+          onclick="sendWhatsAppFeedback()" 
+          class="w-full py-3 bg-[#9b6dff] hover:bg-[#8c57ff] text-white font-semibold text-xs rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm"
+        >
+          <i class="fa-brands fa-whatsapp text-sm"></i>
+          <span>WhatsApp ile İlet</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function getSlug() {
+      const parts = window.location.pathname.split('/').filter(Boolean);
+      if (parts.length >= 2 && parts[0] === 'demo') {
+        return parts[1];
+      }
+      return window.location.hostname.split('.')[0];
+    }
+
+    const currentSlug = getSlug();
+    const siteFrame = document.getElementById('siteFrame');
+    const deviceWrapper = document.getElementById('deviceWrapper');
+    const headerTitle = document.getElementById('headerProjectName');
+    const rawDirectLink = document.getElementById('rawDirectLink');
+    const lockLink = document.getElementById('lockLink');
+    const btnRotate = document.getElementById('btnRotate');
+
+    let currentDevice = 'desktop';
+    let isLandscape = false;
+    let projectData = null;
+
+    async function initProject() {
+      try {
+        const res = await fetch(`/api/demo-meta/${currentSlug}`);
+        if (!res.ok) {
+          window.location.reload();
+          return;
+        }
+
+        projectData = await res.json();
+        headerTitle.textContent = projectData.name;
+        document.title = `${projectData.name} — Önizleme | Kralin Software`;
+
+        const rawUrl = `/raw/${currentSlug}/index.html`;
+        siteFrame.src = rawUrl;
+        rawDirectLink.href = rawUrl;
+        lockLink.href = `/demo/${currentSlug}/lock`;
+
+      } catch (err) {
+        headerTitle.textContent = 'Önizleme';
+      }
+    }
+
+    function setViewport(device) {
+      currentDevice = device;
+      isLandscape = false;
+
+      document.querySelectorAll('.segmented-item').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      const activeBtnMap = {
+        desktop: 'btnDesktop',
+        laptop: 'btnLaptop',
+        tablet: 'btnTablet',
+        mobile: 'btnMobile'
+      };
+      const activeBtn = document.getElementById(activeBtnMap[device]);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      applyDeviceStyles();
+    }
+
+    function toggleOrientation() {
+      if (currentDevice === 'tablet' || currentDevice === 'mobile') {
+        isLandscape = !isLandscape;
+        applyDeviceStyles();
+      }
+    }
+
+    function applyDeviceStyles() {
+      deviceWrapper.className = 'device-transition relative flex items-center justify-center';
+      siteFrame.className = 'border-0 bg-white';
+      btnRotate.classList.add('hidden');
+
+      if (currentDevice === 'desktop') {
+        deviceWrapper.style.width = '100%';
+        deviceWrapper.style.height = '100%';
+        siteFrame.style.width = '100%';
+        siteFrame.style.height = '100%';
+        siteFrame.style.borderRadius = '0';
+      } else if (currentDevice === 'laptop') {
+        deviceWrapper.style.width = '1280px';
+        deviceWrapper.style.height = '94%';
+        deviceWrapper.classList.add('bezel-shadow', 'my-auto', 'rounded-2xl', 'overflow-hidden');
+        siteFrame.style.width = '1280px';
+        siteFrame.style.height = '100%';
+        siteFrame.style.borderRadius = '1rem';
+      } else if (currentDevice === 'tablet') {
+        btnRotate.classList.remove('hidden');
+        const w = isLandscape ? '1024px' : '768px';
+        const h = isLandscape ? '768px' : '1024px';
+        deviceWrapper.style.width = w;
+        deviceWrapper.style.height = '92%';
+        deviceWrapper.classList.add('bezel-shadow', 'my-auto', 'rounded-3xl', 'overflow-hidden');
+        siteFrame.style.width = '100%';
+        siteFrame.style.height = '100%';
+        siteFrame.style.borderRadius = '1.5rem';
+      } else if (currentDevice === 'mobile') {
+        btnRotate.classList.remove('hidden');
+        const w = isLandscape ? '852px' : '393px';
+        const h = isLandscape ? '393px' : '852px';
+        deviceWrapper.style.width = w;
+        deviceWrapper.style.height = '90%';
+        deviceWrapper.classList.add('bezel-shadow', 'my-auto', 'rounded-[2.8rem]', 'overflow-hidden');
+        siteFrame.style.width = '100%';
+        siteFrame.style.height = '100%';
+        siteFrame.style.borderRadius = '2.8rem';
+      }
+    }
+
+    function openFeedbackModal() {
+      document.getElementById('feedbackModal').classList.remove('hidden');
+    }
+    function closeFeedbackModal() {
+      document.getElementById('feedbackModal').classList.add('hidden');
+    }
+
+    function sendWhatsAppFeedback() {
+      const notes = document.getElementById('feedbackNotes').value.trim();
+      const company = projectData ? projectData.name : 'Web Sitesi';
+      const rawPhone = (projectData?.company?.phone || '905446014765').replace(/\D/g, '');
+      const phone = rawPhone.startsWith('90') ? rawPhone : (rawPhone.startsWith('0') ? '9' + rawPhone : '90' + rawPhone);
+
+      let msg = `Merhaba Kralin Software ekibi,\n\n"${company}" için hazırlanan web sitesi demosunu inceledik.\n\n`;
+      if (notes) {
+        msg += `Görüş ve Notlarımız:\n${notes}\n\n`;
+      } else {
+        msg += `Tasarımı inceledik, gayet başarılı görünüyor!\n\n`;
+      }
+      msg += `Demo Adresi: ${window.location.href}`;
+
+      const waUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`;
+      window.open(waUrl, '_blank');
+      closeFeedbackModal();
+    }
+
+    initProject();
+  </script>
+</body>
+</html>

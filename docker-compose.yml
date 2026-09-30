@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  kralin-demos:
+    build: .
+    container_name: kralin-demo-hub
+    restart: always
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - BASE_DOMAIN=kralinsoftware.com
+      - ADMIN_PASSWORD=kralin2026
+      - SECRET_KEY=kralin-software-super-secret-key-change-in-production
+    volumes:
+      - ./storage:/app/storage

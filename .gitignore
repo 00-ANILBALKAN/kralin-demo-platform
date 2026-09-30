@@ -1,0 +1,8 @@
+node_modules/
+.env
+.DS_Store
+storage/temp_uploads/*
+!storage/temp_uploads/.gitkeep
+storage/demos/*
+!storage/demos/.gitkeep
+storage/*.sqlite*

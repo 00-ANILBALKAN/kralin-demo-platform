@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kralin Software — Yönetici Girişi</title>
+  <link rel="icon" type="image/png" href="/images/kralin-logo.png">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --kralin-purple: #9b6dff;
+      --kralin-purple-light: #bda3ff;
+      --font-kralin: "Satoshi", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
+    }
+    body {
+      font-family: var(--font-kralin);
+      background-color: #000000;
+      color: #f5f5f7;
+      letter-spacing: -0.015em;
+    }
+    .apple-card {
+      background: #141416;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .apple-input {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .apple-input:focus {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--kralin-purple);
+      box-shadow: 0 0 0 4px rgba(155, 109, 255, 0.2);
+    }
+    .kralin-btn {
+      background-color: var(--kralin-purple);
+      color: #ffffff;
+      transition: all 0.15s ease;
+    }
+    .kralin-btn:hover {
+      background-color: #8c57ff;
+    }
+    .kralin-btn:active {
+      transform: scale(0.99);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between items-center p-6 selection:bg-[#9b6dff]/30">
+
+  <!-- Header Brand -->
+  <header class="w-full max-w-5xl flex items-center justify-between py-2 text-xs text-neutral-400">
+    <div class="flex items-center gap-2.5">
+      <img src="/images/kralin-logo.png" alt="Kralin Software" class="w-6 h-6 rounded-md object-contain">
+      <span class="font-extrabold text-white text-xs">Kralin Software</span>
+      <span class="text-neutral-700">/</span>
+      <span class="text-neutral-400">Console</span>
+    </div>
+    <a href="/" class="text-neutral-400 hover:text-white transition">
+      Portal <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-1"></i>
+    </a>
+  </header>
+
+  <!-- Login Card -->
+  <main class="w-full max-w-sm my-auto">
+    <div class="apple-card rounded-3xl p-8 sm:p-9 shadow-2xl relative">
+      
+      <!-- Kralin Logo -->
+      <div class="text-center mb-8">
+        <div class="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-5 p-2.5">
+          <img src="/images/kralin-logo.png" alt="Kralin Software" class="w-full h-full object-contain">
+        </div>
+        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white">
+          Yönetici Girişi
+        </h1>
+        <p class="text-xs text-neutral-400 mt-1.5 font-normal">
+          Kralin Preview Hub yönetim konsoluna erişin
+        </p>
+      </div>
+
+      <!-- Form -->
+      <form id="loginForm" class="space-y-4">
+        <div>
+          <label for="password" class="block text-[11px] font-medium text-neutral-400 mb-1.5 ml-1">
+            Parola
+          </label>
+          <div class="relative">
+            <input 
+              type="password" 
+              id="password" 
+              name="password" 
+              required 
+              placeholder="Yönetici parolanızı girin"
+              class="apple-input w-full px-3.5 py-3 rounded-xl text-sm text-white placeholder:text-neutral-500 focus:outline-none pr-10 font-mono"
+              autofocus
+            >
+            <button 
+              type="button" 
+              id="togglePass" 
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300 p-1 text-xs"
+            >
+              <i class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <div id="errorMsg" class="hidden text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl p-3 text-center"></div>
+
+        <button 
+          type="submit" 
+          id="submitBtn"
+          class="kralin-btn w-full py-3 px-4 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer shadow-sm mt-2"
+        >
+          <span>Giriş Yap</span>
+          <i class="fa-solid fa-arrow-right text-[10px]"></i>
+        </button>
+      </form>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full text-center py-4 text-neutral-600 text-xs">
+    &copy; Kralin Software Inc. Every idea deserves to become real.
+  </footer>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const passInput = document.getElementById('password');
+    const toggleBtn = document.getElementById('togglePass');
+    const errorMsg = document.getElementById('errorMsg');
+    const submitBtn = document.getElementById('submitBtn');
+
+    toggleBtn.addEventListener('click', () => {
+      const isPass = passInput.type === 'password';
+      passInput.type = isPass ? 'text' : 'password';
+      toggleBtn.innerHTML = isPass ? '<i class="fa-regular fa-eye-slash"></i>' : '<i class="fa-regular fa-eye"></i>';
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorMsg.classList.add('hidden');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Giriş yapılıyor...';
+
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: passInput.value })
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          window.location.href = '/admin';
+        } else {
+          errorMsg.textContent = data.error || 'Parola hatalı!';
+          errorMsg.classList.remove('hidden');
+        }
+      } catch (err) {
+        errorMsg.textContent = 'Bağlantı hatası oluştu.';
+        errorMsg.classList.remove('hidden');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Giriş Yap</span><i class="fa-solid fa-arrow-right text-[10px]"></i>';
+      }
+    });
+  </script>
+</body>
+</html>
