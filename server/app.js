@@ -71,16 +71,23 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Sunucu hatası: ' + err.message });
 });
 
+// Health check endpoint (for uptime monitors & keep-alive ping)
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', uptime: process.uptime(), time: new Date().toISOString() });
+});
+
 // Sunucuyu başlat (Eğer doğrudan çalıştırıldıysa)
 if (require.main === module) {
-  // İlk çalıştırmada demo yoksa otomatik örnek oluştur
-  try {
-    const db = require('./database/db');
-    if (db.getAllProjects().length === 0) {
-      require('../scripts/seed.js');
+  // Yalnızca AUTO_SEED=true ise otomatik seed çalıştır
+  if (process.env.AUTO_SEED === 'true') {
+    try {
+      const db = require('./database/db');
+      if (db.getAllProjects().length === 0) {
+        require('../scripts/seed.js');
+      }
+    } catch (e) {
+      console.error('Seed kontrolü:', e.message);
     }
-  } catch (e) {
-    console.error('Seed kontrolü:', e.message);
   }
 
   app.listen(config.PORT, () => {

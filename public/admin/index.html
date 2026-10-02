@@ -487,8 +487,9 @@
       grid.classList.add('hidden');
 
       try {
-        const statsRes = await fetch('/api/admin/stats', {
-          headers: { 'Accept': 'application/json' }
+        const statsRes = await fetch('/api/admin/stats?_t=' + Date.now(), {
+          headers: { 'Accept': 'application/json' },
+          cache: 'no-store'
         });
         if (statsRes.status === 401 || !statsRes.ok) {
           window.location.href = '/admin/login';
@@ -500,8 +501,9 @@
         document.getElementById('statViews').textContent = stats.totalViews;
         if (stats.baseDomain) systemBaseDomain = stats.baseDomain;
 
-        const res = await fetch('/api/admin/projects', {
-          headers: { 'Accept': 'application/json' }
+        const res = await fetch('/api/admin/projects?_t=' + Date.now(), {
+          headers: { 'Accept': 'application/json' },
+          cache: 'no-store'
         });
         if (!res.ok) throw new Error('Projeler alınamadı.');
         currentProjects = await res.json();
@@ -836,7 +838,10 @@
       }
 
       try {
-        const res = await fetch(`/api/admin/projects/${id}`, { method: 'DELETE' });
+        const res = await fetch(`/api/admin/projects/${id}`, { 
+          method: 'DELETE',
+          cache: 'no-store'
+        });
         const data = await res.json();
         if (res.ok && data.success) {
           showToast(`"${name}" silindi.`);
